@@ -55,8 +55,17 @@ If you did not create an account, then ignore this email.`;
   await sendEmail(to, subject, text);
 };
 
+const sendEventNotifierMail = async (event) => {
+  const to = event.user.email;
+  const subject = `Event "${event.title}" is starting now`;
+  const text = `Your event "${event.title}" is starting now and will end on ${event.endDate}.`;
+  await sendEmail(to, subject, text);
+  logger.info(`Email sent for event "${event.title}"`);
+}
+
 module.exports = {
   transport,
+  sendEventNotifierMail,
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,

@@ -43,7 +43,6 @@ export default function CustomCalendar({ events }) {
 
   const handleSelectEvent = useCallback(
     ({ id, title, start, end, description }) => {
-      console.log({ id, title, start, end, description });
       setIsModalOpen(true);
       dispatch(
         setEditingEvent({ event: { id, title, start, end, description } })
@@ -75,7 +74,7 @@ export default function CustomCalendar({ events }) {
         })),
       ],
     };
-  }, [timezone]);
+  }, [timezone, events]);
 
   useEffect(
     () => () => {
@@ -83,7 +82,6 @@ export default function CustomCalendar({ events }) {
     },
     []
   );
-  console.log("myeve", myEvents);
   return (
     <div className="flex flex-col gap-3 w-full">
       <TimezoneSelect

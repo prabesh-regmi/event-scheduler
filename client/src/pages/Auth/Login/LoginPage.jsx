@@ -9,7 +9,6 @@ import SubmitSpinner from "../../../components/common/SubmitSpinner";
 import ErrorMessage from "../../../components/common/ErrorMessage";
 import { login } from "../../../redux/slices/loginSlice";
 import { handleLogin } from "../../../services";
-import { toast } from "react-toastify";
 
 function LoginPage() {
   const [isLogging, setIsLogging] = useState(false);
@@ -22,9 +21,6 @@ function LoginPage() {
     if (isAuthenticated) {
       navigate("/");
     }
-    toast.warn(
-      "Wait few minuets for the first time to connect backend, It is hosted in free tier so it will be stop when inactive"
-    );
   }, []);
   const handleToggle = () => {
     setPasswordShown(!passwordShown);

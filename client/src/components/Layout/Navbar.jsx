@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ModalTemplateWithArgs from "../common/modal/ModalTemplateWithArgs";
 import LogoutConformationModal from "../common/modal/LogoutConformationModal";
@@ -22,6 +23,11 @@ function Navbar() {
   const handleLogout = () => {
     setIsLogoutModalOpen(true);
   };
+  useEffect(() => {
+    toast.warn(
+      "Wait few minuets for the first time to connect backend, It is hosted in free tier so it will be stop when inactive"
+    );
+  }, []);
   return (
     <>
       <nav className="bg-primary border-gray-200 h-14">

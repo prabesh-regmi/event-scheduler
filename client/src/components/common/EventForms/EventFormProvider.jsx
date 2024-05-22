@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "../Input/Input";
 import { createEvent, updateEvent } from "../../../services/handlePostRequest";
+import { clearEvents, setEvents } from "../../../redux/slices/eventsSlice";
+import { getEvents } from "../../../services";
 
 function EventFormProvider({ onCancel }) {
   const { event } = useSelector((state) => state.event);
   const [isSubmitting, setSubmitting] = useState(false);
   const formMethods = useForm({ defaultValues: { ...event, id: undefined } });
+  const dispatch = useDispatch();
+  const handleSuccess = async () => {
+    // dispatch(clearEvents());
+    const data = await getEvents();
+    dispatch(setEvents({ events: data.events }));
+  };
   const onSubmit = async (data) => {
     setSubmitting(true);
     let res;
@@ -20,6 +28,7 @@ function EventFormProvider({ onCancel }) {
     setSubmitting(false);
     if (res.event) {
       toast.success("Event added");
+      handleSuccess();
       return onCancel();
     }
     toast.error(res.message);

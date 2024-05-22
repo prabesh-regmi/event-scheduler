@@ -7,10 +7,10 @@ const { eventValidation } = require('../../validations')
 const { eventController } = require('../../controllers');
 
 const router = express.Router();
-router.get('/', eventController.getEvents);
-router.post('/', auth('createEvents'), validate(eventValidation.createEvent), eventController.createEvent);
-router.get('/:eventId', validate(eventValidation.getEvent), eventController.getEventById);
-router.put('/:eventId', auth('updateEvents'), validate(eventValidation.updateEvent), eventController.updateEvent);
-router.delete('/:eventId', auth('deleteEvents'), validate(eventValidation.deleteEvent), eventController.deleteEvent);
+router.get('/', auth(), eventController.getEvents);
+router.post('/', auth(), validate(eventValidation.createEvent), eventController.createEvent);
+router.get('/:eventId', auth(), validate(eventValidation.getEvent), eventController.getEventById);
+router.put('/:eventId', auth(), validate(eventValidation.updateEvent), eventController.updateEvent);
+router.delete('/:eventId', auth(), validate(eventValidation.deleteEvent), eventController.deleteEvent);
 
 module.exports = router;

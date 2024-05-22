@@ -7,6 +7,7 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
     "dev": "cross-env NODE_ENV=development nodemon api/index.js",
+    "client-dev": "cd client && yarn dev",
     "production": "node api/index.js"
   },
   "dependencies": {

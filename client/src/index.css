@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+    @apply px-8 py-2 text-sm font-bold border;
+}
+.btn-sm {
+    @apply px-5 py-1 text-sm;
+}
+.btn-lg {
+    @apply px-10 py-3 text-base;
+}
+.btn-xl {
+    @apply px-12 py-4 text-lg;
+}
+.btn-primary {
+    @apply text-white font-bold border-primary bg-primary transition duration-300 hover:bg-white hover:text-primary;
+}
+.active {
+    color: #52f5a9;
+    font-weight: bold;
+}
+.error-message{
+    @apply text-sm text-red-600;
+}
+.modal-open{
+    overflow: hidden;
+}
+.react-datepicker-wrapper{
+    width: 100%;
+}
+.rbc-calendar {
+    min-height: 580px;
+}

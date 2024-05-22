@@ -23,7 +23,7 @@ coverage/
 /client/.next/
 /client/out/
 /client/*.local
-
+/client/src.bak
 # OS specific
 .DS_Store
 Thumbs.db

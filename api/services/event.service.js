@@ -1,42 +1,115 @@
 const httpStatus = require('http-status');
-const { Event, Input, Option } = require('../models');
+const { Event } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { Op } = require('sequelize');
 
-
-const getEventById = async (eventId) => {
+const checkValidStarAndEndDate = (start, end) => {
+    if (new Date(start) >= new Date(end)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Start date should be before end date.');
+    }
+}
+const getEventById = async (eventId, user) => {
     const event = await Event.findByPk(eventId);
     if (!event) {
-        throw new Error('Event not found');
+        throw new ApiError(httpStatus.NOT_FOUND, "Event not found")
+    }
+    if (user?.id !== event.userId) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Unauthorized")
     }
     return event;
 };
 
-const getEvents = async () => {
-    const events = await Event.findAll();
+const getEventsOfUser = async (userId) => {
+    const events = await Event.findAll({ where: { userId } });
     return events;
 };
 
 async function createEvent(eventData, userId) {
-    const { name } = eventData;
-    const event = await Event.create({ name,userId });
-    return event;
+    checkValidStarAndEndDate(eventData.start, eventData.end);
+    // Check for overlapping events
+    const overlappingEvents = await Event.findOne({
+        where: {
+            [Op.or]: [
+                {
+                    start: {
+                        [Op.between]: [eventData.start, eventData.end]
+                    }
+                },
+                {
+                    end: {
+                        [Op.between]: [eventData.start, eventData.end]
+                    }
+                },
+                {
+                    [Op.and]: [
+                        {
+                            start: {
+                                [Op.lte]: eventData.start
+                            }
+                        },
+                        {
+                            end: {
+                                [Op.gte]: eventData.end
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+
+    if (overlappingEvents) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'There is already an event scheduled within the given start and end time.');
+    }
+    // Create the event
+    return Event.create({ ...eventData, userId });
 }
 
-async function updateEvent(eventId, eventData) {
-    try {
-        const { name } = eventData;
-        const event = await getEventById(eventData)
-        return event;
-    } catch (error) {
-        throw error;
+async function updateEvent(eventId, eventData, user) {
+    console.log(user)
+    checkValidStarAndEndDate(eventData.start, eventData.end);
+    const event = await getEventById(eventId,user)
+    // Check for overlapping events
+    const overlappingEvents = await Event.findOne({
+        where: {
+            id: { [Op.ne]: eventId }, // Exclude the current event
+            [Op.or]: [
+                {
+                    start: {
+                        [Op.between]: [eventData.start, eventData.end]
+                    }
+                },
+                {
+                    end: {
+                        [Op.between]: [eventData.start, eventData.end]
+                    }
+                },
+                {
+                    [Op.and]: [
+                        {
+                            start: {
+                                [Op.lte]: eventData.start
+                            }
+                        },
+                        {
+                            end: {
+                                [Op.gte]: eventData.end
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+    if (overlappingEvents) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'There is already an event scheduled within the given start and end time.');
     }
+    await event.update(eventData);
+    return getEventById(eventId, user);
 }
 
-async function deleteEvent(eventId) {
-    const event = await Event.findByPk(eventId);
-    if (!event) {
-        throw new Error('Event not found');
-    }
+async function deleteEvent(eventId, user) {
+    const event = await getEventById(eventId, user)
     await event.destroy();
 }
 
@@ -45,5 +118,5 @@ module.exports = {
     updateEvent,
     deleteEvent,
     getEventById,
-    getEvents
+    getEventsOfUser
 };

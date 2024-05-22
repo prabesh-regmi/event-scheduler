@@ -1,6 +1,7 @@
 const Token = require('./token.model');
 const User = require('./user.model');
 const Event = require('./event.model');
+const Participant = require('./participants.model');
 
 
 // Association with User
@@ -10,15 +11,10 @@ Event.belongsTo(User, {
     as: 'user'
 });
 
-Event.hasMany(User, {
-    as: 'participants'
-});
+User.hasMany(Participant)
 
-User.hasMany(Event, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    foreignKey: 'userId',
-    as: 'events'
-});
+Event.hasMany(Participant)
+Participant.belongsTo(Event)
+Participant.belongsTo(User)
 
 module.exports = { Token, User, Event }

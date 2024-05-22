@@ -6,15 +6,16 @@ const event = {
   title: Joi.string().required().messages({
     'any.required': 'Title is required.',
   }),
-  startTime: Joi.date().required().messages({
+  start: Joi.date().required().messages({
     'any.required': 'Start time is required.',
   }),
-  endTime: Joi.date().required().messages({
+  end: Joi.date().required().messages({
     'any.required': 'Ent time is required.',
   }),
   description: Joi.string().required().messages({
     'any.required': 'Description is required.',
   }),
+  participants: Joi.array().items(Joi.string().custom(objectId))
 }
 
 const createEvent = {

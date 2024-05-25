@@ -29,6 +29,7 @@ async function createEvent(eventData, userId) {
     // Check for overlapping events
     const overlappingEvents = await Event.findOne({
         where: {
+            userId: user.id,
             [Op.or]: [
                 {
                     start: {
@@ -66,13 +67,13 @@ async function createEvent(eventData, userId) {
 }
 
 async function updateEvent(eventId, eventData, user) {
-    console.log(user)
     checkValidStarAndEndDate(eventData.start, eventData.end);
-    const event = await getEventById(eventId,user)
+    const event = await getEventById(eventId, user)
     // Check for overlapping events
     const overlappingEvents = await Event.findOne({
         where: {
             id: { [Op.ne]: eventId }, // Exclude the current event
+            userId: user.id,
             [Op.or]: [
                 {
                     start: {
